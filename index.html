@@ -214,6 +214,24 @@ td .muted, .muted { color: var(--muted); }
 .leaves li { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); font-size: 0.9375rem; }
 .leaves li::before { content: "↗"; color: var(--accent); }
 
+
+/* Benchmarks */
+.bars { display: grid; gap: 0.6rem; margin-top: 1.25rem; font-variant-numeric: tabular-nums; }
+.bar-row { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 1rem; align-items: center; font-size: 0.9375rem; }
+.bar-row > span:first-child { color: var(--muted); font: 400 0.875rem/1.4 var(--font-mono); }
+.bar-stack { display: grid; gap: 0.3rem; min-width: 0; }
+.bar { display: flex; align-items: center; gap: 0.6rem; min-width: 0; }
+.bar i { display: block; height: 0.7rem; border-radius: 2px; background: var(--accent); min-width: 2px; flex: none; }
+.bar i.was { background: var(--line); }
+.bar b { font: 500 0.875rem/1 var(--font-mono); white-space: nowrap; }
+.bar small { color: var(--muted); font-size: var(--step--1); white-space: nowrap; }
+.key { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-top: 1rem; color: var(--muted); font-size: var(--step--1); }
+.key span::before { content: ""; display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 2px; background: var(--accent); margin-right: 0.45rem; vertical-align: -0.05em; }
+.key span.was::before { background: var(--line); }
+.chart-title { margin: 2.5rem 0 0; font: 500 var(--step-1)/1.3 var(--font-display); }
+.chart-title + p { color: var(--muted); font-size: 0.9375rem; margin-top: 0.25rem; }
+.table table.wide { min-width: 46rem; }
+
 /* Platforms */
 .matrix td, .matrix th { padding-right: 1.25rem; }
 .matrix tbody th { font: 500 var(--step-0)/1.4 var(--font-display); text-transform: none; letter-spacing: 0; color: var(--text); white-space: nowrap; }
@@ -245,6 +263,7 @@ footer .wrap { padding-block: 2.5rem 3rem; display: flex; justify-content: space
   .project-head img, .project-head .glyph { width: 64px; height: 64px; border-radius: 15px; }
   .features { grid-template-columns: minmax(0, 1fr); }
   .features li, .features li:nth-child(2n) { padding: 1.25rem 0; border-left: 0; }
+  .bar-row { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
   .tool-group { grid-template-columns: minmax(0, 1fr); gap: 0.75rem; }
   .tool-group dl { grid-template-columns: minmax(0, 1fr); gap: 0.1rem; }
   .tool-group dd { margin-bottom: 0.6rem; }
@@ -263,6 +282,7 @@ footer .wrap { padding-block: 2.5rem 3rem; display: flex; justify-content: space
       <a href="#het">Het</a>
       <a href="#voice-studio">Voice Studio</a>
       <a href="#framework">Framework</a>
+      <a class="long" href="#benchmarks">Benchmarks</a>
       <a class="long" href="#platforms">Platforms</a>
     </nav>
   </div>
@@ -550,6 +570,91 @@ footer .wrap { padding-block: 2.5rem 3rem; display: flex; justify-content: space
         <li><h4>Licences built in</h4><p>Each model's licence text ships with its package and goes on the app's licence page in one call, with non-commercial models flagged.</p></li>
       </ul>
       <p class="note">Native plugins build for iOS 17 and macOS 14 and up, with Swift Package Manager, and are tested on iOS 26 and macOS 26. Elsewhere, downloads run in the foreground, MLX models report that they can't run here, and Supertonic still speaks.</p>
+    </div>
+  </section>
+
+
+  <!-- Benchmarks -->
+  <section class="project" id="benchmarks">
+    <div class="wrap">
+      <p class="eyebrow">Measured on real devices</p>
+      <h2>Benchmarks</h2>
+      <p class="intro">Het runs its models with MLX, Apple's machine-learning framework for Apple silicon. These are the measurements from moving image and speech models onto it, and from trying draft-ahead decoding. Each figure comes from a recorded run on the device named. Most are single runs, so read small differences as noise.</p>
+
+      <h3 class="sub">Images, per image <small>On device, 4-bit models, seed fixed</small></h3>
+      <div class="table">
+        <table class="wide">
+          <thead><tr><th>Model</th><th>Device</th><th>Image</th><th>Steps</th><th>Denoising</th><th>Whole image</th><th>Peak memory</th></tr></thead>
+          <tbody>
+            <tr><td>FLUX.2 klein 4B</td><td>Mac</td><td>512²</td><td>4</td><td>7 s</td><td>9 s</td><td>2.66 GB</td></tr>
+            <tr><td>FLUX.2 klein 4B</td><td>iPad Pro, 16 GB</td><td>1024×768</td><td>4</td><td>14.3 s</td><td>22 s</td><td>3.14 GB</td></tr>
+            <tr><td>Z-Image Turbo</td><td>Mac</td><td>1024²</td><td>9</td><td class="muted">not split</td><td>84 s</td><td>4.46 GB</td></tr>
+            <tr><td>Z-Image Turbo</td><td>iPad Pro, 16 GB</td><td>1024²</td><td>9</td><td>58.0 s</td><td>64 s</td><td class="muted">not recorded</td></tr>
+            <tr><td>Qwen-Image 2.1</td><td>iPad Pro, 16 GB</td><td>768²</td><td>40</td><td>203.1 s</td><td>213 s</td><td>4.89 GB</td></tr>
+            <tr><td>Qwen-Image 2.1</td><td>iPad Pro, 16 GB</td><td>1024²</td><td>8</td><td>70.6 s</td><td class="muted">not recorded</td><td>5.16 GB</td></tr>
+            <tr><td>Qwen-Image 2.1 Turbo</td><td>Mac Studio, M2 Max</td><td>1024²</td><td>8</td><td>85 to 87 s</td><td class="muted">not recorded</td><td>5.58 GB</td></tr>
+            <tr><td>Qwen-Image 2.1</td><td>Mac Studio, M2 Max</td><td>1024²</td><td>40</td><td>423 to 440 s</td><td class="muted">not recorded</td><td>5.40 to 5.44 GB</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">The iPad ran Qwen-Image at 8.8 seconds a step at 1024², against 10.6 to 11 on the M2 Max Mac Studio. They are different chips, so that compares the devices, not the code. The Mac in the klein and Z-Image rows is an M-series Mac on macOS 26.</p>
+
+      <h4 class="chart-title">Z-Image Turbo on a Mac, seconds per image</h4>
+      <p>Nine steps. Doubling the side takes the time up about four times, as the number of pixels does.</p>
+      <div class="bars" role="img" aria-label="Z-Image Turbo time per image on a Mac: 512 pixels 20 seconds, 768 pixels 46 seconds, 1024 pixels 84 seconds, 1280 pixels 140 seconds">
+<div class="bar-row"><span>512²</span><div class="bar-stack"><div class="bar"><i style="width:11.2%"></i><b>20 s</b></div></div></div>
+<div class="bar-row"><span>768²</span><div class="bar-stack"><div class="bar"><i style="width:25.7%"></i><b>46 s</b></div></div></div>
+<div class="bar-row"><span>1024²</span><div class="bar-stack"><div class="bar"><i style="width:46.8%"></i><b>84 s</b></div></div></div>
+<div class="bar-row"><span>1280²</span><div class="bar-stack"><div class="bar"><i style="width:78.0%"></i><b>140 s</b></div></div></div>
+      </div>
+
+      <h4 class="chart-title">FLUX.2 klein, memory used to decode the image</h4>
+      <p>The peak while the finished picture is turned into pixels, on a Mac. Running the decoder a strip of rows at a time cut it to about a quarter, with the same output.</p>
+      <div class="bars" role="img" aria-label="Klein decode peak memory before and after: 512 pixels 2.63 to 0.69 gigabytes, 768 pixels 5.47 to 1.31, 1024 pixels 9.65 to 2.19, 1280 pixels 15.0 to 3.33">
+<div class="bar-row"><span>512²</span><div class="bar-stack"><div class="bar"><i class="was" style="width:13.7%"></i><b>2.63 GB</b></div><div class="bar"><i style="width:3.6%"></i><b>0.69 GB</b></div></div></div>
+<div class="bar-row"><span>768²</span><div class="bar-stack"><div class="bar"><i class="was" style="width:28.5%"></i><b>5.47 GB</b></div><div class="bar"><i style="width:6.8%"></i><b>1.31 GB</b></div></div></div>
+<div class="bar-row"><span>1024²</span><div class="bar-stack"><div class="bar"><i class="was" style="width:50.2%"></i><b>9.65 GB</b></div><div class="bar"><i style="width:11.4%"></i><b>2.19 GB</b></div></div></div>
+<div class="bar-row"><span>1280²</span><div class="bar-stack"><div class="bar"><i class="was" style="width:78.0%"></i><b>15 GB</b></div><div class="bar"><i style="width:17.3%"></i><b>3.33 GB</b></div></div></div>
+      </div>
+      <div class="key"><span class="was">Before</span><span>After</span></div>
+      <p class="note">The denoising stage shrank too, by evaluating a block at a time: from 3.81 GB to 2.66 GB at 512².</p>
+
+      <h3 class="sub">How close to the Python original <small>Same seed and prompt, 512²</small></h3>
+      <div class="table">
+        <table>
+          <thead><tr><th>Check</th><th>FLUX.2 klein 4B</th><th>Z-Image Turbo</th></tr></thead>
+          <tbody>
+            <tr><td>First denoising step, cosine similarity</td><td>0.99992</td><td>0.9997</td></tr>
+            <tr><td>Final latents, cosine similarity</td><td>0.998</td><td>0.9975</td></tr>
+            <tr><td>Decoder, signal to noise</td><td>51 dB</td><td>49 dB</td></tr>
+            <tr><td>Whole image, signal to noise</td><td>27.9 dB</td><td>35.7 dB</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Both come out as the same picture to the eye. The gap is not a mistake in the port. The Metal kernels MLX builds for Swift round the last bit differently from the Python ones, and klein's four large steps magnify that more than Z-Image's nine small ones do.</p>
+
+      <h3 class="sub">Chat, drafting ahead <small>Gemma 4 E2B, tokens a second</small></h3>
+      <div class="table">
+        <table>
+          <thead><tr><th>Device</th><th>Writing</th><th>Plain</th><th>Drafting ahead</th><th>Change</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="3">iPhone 17 Pro</td><td>Code</td><td>44.9</td><td>59.7</td><td>+33%</td></tr>
+            <tr><td>Chat</td><td>43.0</td><td>46.6</td><td class="muted">+8%, within noise</td></tr>
+            <tr><td>Story</td><td>42.8</td><td>40.8</td><td class="muted">−5%, within noise</td></tr>
+            <tr><td rowspan="2">Mac Studio, M2 Max</td><td>Code</td><td>92.9</td><td>133.3</td><td>+43%</td></tr>
+            <tr><td>Story</td><td>93.6</td><td>96.9</td><td class="muted">+4%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">A small drafter guesses a few tokens and the large model checks them in one pass. Only code clearly gets faster. On the iPhone these are one run each at Het's normal temperature, and the error on a ratio is about 7 to 8 percent. The Mac rows are mlx-vlm at temperature 0, and in Het's own app on the Mac, replies were slower with a drafter by 12 to 43 percent. So Het offers it as a per-model choice, Draft ahead, on iPhone only, and leaves it off everywhere else.</p>
+
+      <h3 class="sub">Speech, an MMS voice on MLX <small>A Python port, on an M2 Max</small></h3>
+      <ul class="features">
+        <li><h4>About 18 times faster than real time</h4><p>The Tai Dam MMS voice, ported to MLX. Its waveform matches the original's within 6e-5.</p></li>
+        <li><h4>1.8% character error</h4><p>Read back by a speech recogniser over 20 verses. After the 15 training steps it reads back at 2.3%.</p></li>
+        <li><h4>Training, 22 s against 30 s</h4><p>Fifteen steps at batch 8, on MLX and on PyTorch with Apple's GPU backend. One step's loss matches PyTorch's to within 2.5e-6.</p></li>
+      </ul>
+      <p class="note">These figures are for the Python port, not the Swift version the apps run.</p>
     </div>
   </section>
 
