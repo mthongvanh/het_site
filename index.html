@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Het</title>
+<meta name="description" content="Het is a private studio for AI. It runs chat, image and voice models on your phone, iPad or Mac, or on hardware you own. Het, Het Voice Studio and het_framework.">
+<meta property="og:title" content="Het">
+<meta property="og:description" content="A private studio for AI, on your phone and on hardware you own.">
+<meta property="og:image" content="https://het.tveye.io/img/het.png">
+<meta property="og:url" content="https://het.tveye.io/">
+<meta name="theme-color" content="#171B1B">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Noto+Sans+Lao:wght@500&display=swap">
+<style>
+/* Layout: one reading column, 1080px wide; each project is a band opened by its icon,
+   then features on a ruled grid, then its reference tables. Colours are Het's Nocturne
+   theme (dark first) with a paper-and-ink light side. */
+:root {
+  --bg: #171B1B;
+  --band: #1A1F1F;
+  --surface: #1E2423;
+  --line: #2E3834;
+  --text: #E4EBE7;
+  --muted: #8D9992;
+  --accent: #A4F5CE;
+  --accent-soft: rgba(164, 245, 206, 0.10);
+  --on-accent: #132420;
+  --warn: #FFAB83;
+  --font-display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-body: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-lao: "Noto Sans Lao", "Lao Sangam MN", sans-serif;
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.1875rem;
+  --step-2: 1.5rem;
+  --step-3: clamp(1.875rem, 1.3rem + 2.2vw, 2.75rem);
+  --step-4: clamp(2.25rem, 1.4rem + 3.6vw, 3.75rem);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F5F6F3; --band: #EDEFEA; --surface: #FFFFFF; --line: #D6DBD5;
+    --text: #15201B; --muted: #5A6660; --accent: #17744F;
+    --accent-soft: rgba(23, 116, 79, 0.08); --on-accent: #FFFFFF; --warn: #A6421A;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F5F6F3; --band: #EDEFEA; --surface: #FFFFFF; --line: #D6DBD5;
+  --text: #15201B; --muted: #5A6660; --accent: #17744F;
+  --accent-soft: rgba(23, 116, 79, 0.08); --on-accent: #FFFFFF; --warn: #A6421A;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 var(--step-0)/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: var(--accent); text-underline-offset: 0.2em; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+p { margin: 0; }
+code, .mono { font-family: var(--font-mono); font-size: 0.875em; }
+.lao { font-family: var(--font-lao); }
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+
+/* Header */
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 0.75rem; }
+.mark { display: flex; align-items: baseline; gap: 0.5rem; color: var(--text); text-decoration: none; }
+.mark b { font: 500 1.25rem/1 var(--font-display); letter-spacing: 0.01em; }
+.mark span { color: var(--muted); font-size: 0.95rem; }
+.top nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+.top nav a { color: var(--muted); text-decoration: none; font-size: var(--step--1); font-weight: 500; }
+.top nav a:hover { color: var(--text); }
+
+/* Hero */
+.hero .wrap.lead {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  gap: 3rem; align-items: center; padding-block: 4.5rem 3rem;
+}
+.hero .wrap.strip { padding-block: 0 4rem; }
+.eyebrow {
+  font: 500 var(--step--1)/1.4 var(--font-mono); color: var(--accent);
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.hero h1 { font: 400 var(--step-4)/1.08 var(--font-display); letter-spacing: -0.015em; margin-top: 1rem; }
+.hero h1 em { color: var(--accent); }
+.hero .lede { margin-top: 1.5rem; font-size: var(--step-1); color: var(--muted); max-width: 36em; }
+.orb { width: 100%; max-width: 340px; aspect-ratio: 1; justify-self: center; }
+.orb ellipse { fill: none; stroke: var(--accent); }
+
+.status {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.status a {
+  display: grid; gap: 0.25rem; padding: 1.25rem 1.25rem 1.25rem 0;
+  color: var(--text); text-decoration: none;
+}
+.status a + a { padding-left: 1.25rem; border-left: 1px solid var(--line); }
+.status a:hover .name { color: var(--accent); }
+.status .name { font: 500 var(--step-1)/1.3 var(--font-display); }
+.status .what { color: var(--muted); font-size: var(--step--1); }
+.pill {
+  justify-self: start; margin-top: 0.4rem;
+  font: 500 0.75rem/1 var(--font-mono); letter-spacing: 0.03em;
+  padding: 0.35rem 0.6rem; border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent);
+}
+
+/* Project bands */
+.project { padding-block: 5rem 4rem; }
+.project:nth-of-type(even) { background: var(--band); }
+.project-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.project-head img { width: 88px; height: 88px; border-radius: 20px; }
+.project-head .glyph {
+  width: 88px; height: 88px; border-radius: 20px; border: 1px solid var(--line);
+  display: grid; place-items: center; font: 500 1.6rem/1 var(--font-mono); color: var(--accent);
+  background: var(--surface);
+}
+.project h2 { font: 400 var(--step-3)/1.1 var(--font-display); letter-spacing: -0.01em; margin-top: 0.4rem; }
+.project .intro { margin-top: 1rem; font-size: var(--step-1); max-width: 40em; color: var(--muted); }
+.facts { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+.facts span {
+  font: 400 var(--step--1)/1 var(--font-mono); color: var(--muted);
+  border: 1px solid var(--line); border-radius: 999px; padding: 0.45rem 0.7rem;
+}
+.facts span.on { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+
+h3.sub {
+  margin-top: 3.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line);
+  font: 500 var(--step--1)/1.4 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+h3.sub small { text-transform: none; letter-spacing: 0; font-weight: 400; }
+
+.features {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0; margin: 0; padding: 0; list-style: none;
+}
+.features li { padding: 1.5rem 1.5rem 1.5rem 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.features li:not(:nth-child(3n+1)) { padding-left: 1.5rem; border-left: 1px solid var(--line); }
+.features h4 { margin: 0 0 0.4rem; font: 500 var(--step-1)/1.3 var(--font-display); }
+.features p { color: var(--muted); font-size: 0.9375rem; }
+
+/* Tools */
+.tools { display: grid; gap: 0; }
+.tool-group { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 1.5rem; padding-block: 1.25rem; border-bottom: 1px solid var(--line); }
+.tool-group > h4 { margin: 0; font: 500 var(--step-0)/1.4 var(--font-body); }
+.tool-group > h4 small { display: block; font-weight: 400; color: var(--muted); font-size: var(--step--1); margin-top: 0.25rem; }
+.tool-group dl { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0.55rem 1.25rem; }
+.tool-group dt { font: 500 0.875rem/1.6 var(--font-mono); color: var(--accent); }
+.tool-group dd { margin: 0; color: var(--muted); font-size: 0.9375rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+.chips span { font-size: var(--step--1); padding: 0.4rem 0.7rem; border-radius: 6px; background: var(--surface); border: 1px solid var(--line); }
+.chips span code { color: var(--accent); }
+.note { margin-top: 1rem; color: var(--muted); font-size: var(--step--1); max-width: 60em; }
+
+/* Tables */
+.table { overflow-x: auto; margin-top: 0.25rem; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 0.75rem 1rem 0.75rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 0.75rem/1.4 var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+td.n { white-space: nowrap; }
+td .muted, .muted { color: var(--muted); }
+.nc { color: var(--warn); }
+
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 3rem; }
+.two > div { min-width: 0; }
+.list { margin: 0; padding: 0; list-style: none; }
+.list li { padding: 0.75rem 0; border-bottom: 1px solid var(--line); display: grid; gap: 0.15rem; }
+.list li b { font-weight: 500; }
+.list li span { color: var(--muted); font-size: 0.9375rem; }
+
+.endpoints { margin: 0; padding: 1.25rem; list-style: none; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; display: grid; gap: 0.5rem; font: 400 0.875rem/1.5 var(--font-mono); overflow-x: auto; }
+.endpoints li { white-space: nowrap; }
+.endpoints .verb { color: var(--accent); display: inline-block; width: 3.5rem; }
+.endpoints .c { color: var(--muted); }
+
+.leaves {
+  margin-top: 3.5rem; padding: 1.75rem; border-radius: 12px;
+  background: var(--accent-soft); display: grid; grid-template-columns: minmax(0, 17rem) minmax(0, 1fr); gap: 2rem;
+}
+.leaves h3 { font: 400 var(--step-2)/1.2 var(--font-display); }
+.leaves p.small { color: var(--muted); font-size: var(--step--1); margin-top: 0.6rem; }
+.leaves ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
+.leaves li { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr); font-size: 0.9375rem; }
+.leaves li::before { content: "↗"; color: var(--accent); }
+
+/* Platforms */
+.matrix td, .matrix th { padding-right: 1.25rem; }
+.matrix tbody th { font: 500 var(--step-0)/1.4 var(--font-display); text-transform: none; letter-spacing: 0; color: var(--text); white-space: nowrap; }
+.dot { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 50%; margin-right: 0.45rem; vertical-align: 0.05em; background: var(--accent); }
+.dot.part { background: transparent; border: 1.5px solid var(--accent); }
+.dot.none { background: var(--line); }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 2.5rem 3rem; display: flex; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; color: var(--muted); font-size: var(--step--1); }
+
+@media (max-width: 900px) {
+  .features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .features li:not(:nth-child(3n+1)) { padding-left: 0; border-left: 0; }
+  .features li:nth-child(2n) { padding-left: 1.5rem; border-left: 1px solid var(--line); }
+}
+@media (max-width: 720px) {
+  .hero .wrap.lead { grid-template-columns: minmax(0, 1fr); padding-block: 2.5rem 2rem; gap: 1.5rem; }
+  .hero .wrap.strip { padding-block: 0 3rem; }
+  .endpoints li { white-space: normal; }
+  .endpoints .c { display: block; padding-left: 3.5rem; }
+  .orb { max-width: 180px; order: -1; justify-self: start; }
+  .status { grid-template-columns: minmax(0, 1fr); }
+  .status a, .status a + a { padding: 1rem 0; border-left: 0; }
+  .status a + a { border-top: 1px solid var(--line); }
+  .top nav { gap: 0.9rem; }
+  .top nav a.long { display: none; }
+  .project { padding-block: 3.5rem 3rem; }
+  .project-head { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .project-head img, .project-head .glyph { width: 64px; height: 64px; border-radius: 15px; }
+  .features { grid-template-columns: minmax(0, 1fr); }
+  .features li, .features li:nth-child(2n) { padding: 1.25rem 0; border-left: 0; }
+  .tool-group { grid-template-columns: minmax(0, 1fr); gap: 0.75rem; }
+  .tool-group dl { grid-template-columns: minmax(0, 1fr); gap: 0.1rem; }
+  .tool-group dd { margin-bottom: 0.6rem; }
+  .two { grid-template-columns: minmax(0, 1fr); }
+  .leaves { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; padding: 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="#top"><b>Het</b> <span class="lao" lang="lo">ເຮັດ</span></a>
+    <nav aria-label="Projects">
+      <a href="#het">Het</a>
+      <a href="#voice-studio">Voice Studio</a>
+      <a href="#framework">Framework</a>
+      <a class="long" href="#platforms">Platforms</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap lead">
+      <div>
+        <p class="eyebrow">Private AI, on your own hardware</p>
+        <h1>A studio for AI that lives on <em>your</em> phone, iPad and Mac.</h1>
+        <p class="lede">Het runs chat, image and voice models on the device itself, or on a Mac you already own. There is no account, and nothing leaves the device unless you turn on web search. Three projects make it up.</p>
+      </div>
+      <svg class="orb" id="orb" viewBox="-110 -110 220 220" role="img" aria-label="Het's orb: rings stacked into a sphere"></svg>
+    </div>
+    <div class="wrap strip">
+      <div class="status">
+        <a href="#het">
+          <span class="name">Het</span>
+          <span class="what">The app: chat, projects, images, voice and meetings.</span>
+          <span class="pill">Beta on TestFlight</span>
+        </a>
+        <a href="#voice-studio">
+          <span class="name">Het Voice Studio</span>
+          <span class="what">A Mac app for making, cloning and training voices.</span>
+          <span class="pill">In development</span>
+        </a>
+        <a href="#framework">
+          <span class="name">het_framework</span>
+          <span class="what">The Flutter packages both apps are built from.</span>
+          <span class="pill">v0.21.0</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Het -->
+  <section class="project" id="het">
+    <div class="wrap">
+      <div class="project-head">
+        <img src="img/het.png" alt="Het's app icon" width="88" height="88">
+        <div>
+          <p class="eyebrow">The app</p>
+          <h2>Het</h2>
+          <p class="intro">Talk to a model, make pages and pictures, record meetings, and run it all on this device, offline. Chats, projects and files stay on the device.</p>
+          <div class="facts">
+            <span class="on">iPhone</span><span class="on">iPad</span><span class="on">Mac</span><span>Android · chat with GGUF models</span><span>Tested on iOS 26 and macOS 26</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sub">What it does</h3>
+      <ul class="features">
+        <li><h4>Chat</h4><p>Answers stream in with Markdown and highlighted code. The model's reasoning folds away above the answer, and one line sums up what a reply did. Each chat keeps its own model and instructions.</p></li>
+        <li><h4>Projects</h4><p>A piece of work with its chats, the files they share, and instructions every chat starts with. A chat that starts building a page, deck or app becomes a project by itself.</p></li>
+        <li><h4>Pages, decks and apps</h4><p>Het asks what you want, offers wireframes, sets typefaces in your own headline, then builds and checks the layout. Svelte 5 apps compile on the device, with no Node and no build step, and show live beside the chat on iPad and Mac.</p></li>
+        <li><h4>Images</h4><p>Text to image on the device. Before it starts, Het shows the prompt and how long it should take. Qwen-Image can cut the subject out as a transparent PNG.</p></li>
+        <li><h4>Voice mode</h4><p>Talk inside the current chat. Het hears when you have finished by how you speak, not only by a pause, in ten languages, and answers in Kokoro, Supertonic or the system's voices. What you say stays on the device.</p></li>
+        <li><h4>Make speech</h4><p>Text to WAV with on-device speech models. Clone a voice from 5 to 15 seconds of audio, kept only once you confirm consent, or describe the voice you want.</p></li>
+        <li><h4>Meetings</h4><p>A recording, a video or a live meeting becomes a transcript of who said what. On the Mac it can record a call's sound along with the microphone. Voices you know are kept as a fingerprint, not a recording.</p></li>
+        <li><h4>Your devices</h4><p>One switch serves this device's models to your other devices. Pair with a six-digit code, find hosts nearby, and a Mac's models appear in your phone's model picker.</p></li>
+        <li><h4>Models</h4><p>Models grouped by where they run: this device, built in, your devices, servers. Suggestions sized to the device, Hugging Face search, and downloads that carry on in the background.</p></li>
+        <li><h4>Library and search</h4><p>Images, speech, meetings, files and skills in one place. Search finds chats, projects, files and images.</p></li>
+        <li><h4>Four themes</h4><p>Nocturne, green-black and mint. Folio, ink on paper. Clay, lilac and coral. Signal, loud and in capitals. Automatic picks Nocturne at night and Folio by day.</p></li>
+        <li><h4>Siri and Shortcuts</h4><p>“Ask Het” answers a question with a local model, from Siri or a shortcut, on iOS 26 and macOS 26.</p></li>
+      </ul>
+
+      <h3 class="sub">Tools the model can call <small>Turned on per chat: Web search, Make files, Images, Think first</small></h3>
+      <div class="tools">
+        <div class="tool-group">
+          <h4>Web<small>Off until you turn on web search</small></h4>
+          <dl>
+            <dt>web_search</dt><dd>Searches the web and returns titles, links and snippets.</dd>
+            <dt>fetch_url</dt><dd>Reads a public page as text.</dd>
+          </dl>
+        </div>
+        <div class="tool-group">
+          <h4>Files<small>In the project's own folder</small></h4>
+          <dl>
+            <dt>write_file</dt><dd>Writes notes, scripts, data or a page.</dd>
+            <dt>append_file</dt><dd>Adds to the end of a file.</dd>
+            <dt>edit_file</dt><dd>Changes part of a file in place.</dd>
+            <dt>read_file</dt><dd>Reads a file back.</dd>
+            <dt>list_files</dt><dd>Lists what the project holds.</dd>
+            <dt>delete_file</dt><dd>Removes a file.</dd>
+          </dl>
+        </div>
+        <div class="tool-group">
+          <h4>Images</h4>
+          <dl>
+            <dt>generate_image</dt><dd>Makes an image from a description, after asking you first.</dd>
+            <dt>look_at_image</dt><dd>Looks at an image made earlier in the chat.</dd>
+            <dt>list_images</dt><dd>Browses your image library.</dd>
+            <dt>add_image</dt><dd>Copies a picture from the library into the project.</dd>
+          </dl>
+        </div>
+        <div class="tool-group">
+          <h4>Design<small>Unlocked by the design guide</small></h4>
+          <dl>
+            <dt>design_guide</dt><dd>The steps for a site, landing page, deck, poster, one-pager or web app.</dd>
+            <dt>choose_wireframe</dt><dd>Lets you pick from two to four grey layouts.</dd>
+            <dt>choose_typography</dt><dd>Lets you pick from 16 typeface pairings, each set in your own headline.</dd>
+            <dt>make_chart</dt><dd>Draws a column, bar, line or donut chart as SVG, checked for contrast.</dd>
+            <dt>add_icon</dt><dd>Adds any of about 1,500 Phosphor icons, in the page's colours.</dd>
+            <dt>check_layout</dt><dd>Lays the page out at 1280 and 390 pixels wide and reports overflow, clipping, contrast, tiny text, broken images and script errors.</dd>
+          </dl>
+        </div>
+        <div class="tool-group">
+          <h4>Asking and skills</h4>
+          <dl>
+            <dt>ask_user</dt><dd>Stops to ask you, with real options, their pros and cons, a recommendation, and “You decide”.</dd>
+            <dt>save_skill</dt><dd>Saves a new skill, such as a house style. It never changes one you already have.</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="chips" aria-label="Built-in skills">
+        <span><code>/wireframe</code> Wireframe first</span>
+        <span><code>/typography</code> Typefaces</span>
+        <span><code>/svelte</code> Svelte app</span>
+        <span>Landing page</span>
+        <span>Pitch deck</span>
+        <span>House style</span>
+        <span>Ask first</span>
+      </div>
+
+      <h3 class="sub">Engines and models</h3>
+      <div class="two">
+        <div>
+          <ul class="list">
+            <li><b>MLX</b><span>On-device chat and images on Apple silicon.</span></li>
+            <li><b>llama.cpp</b><span>Any GGUF model, in the app's own process, with vision projectors. The engine on Android.</span></li>
+            <li><b>Apple Intelligence</b><span>Apple's Foundation Models, on iOS 26 and macOS 26.</span></li>
+            <li><b>Servers you run</b><span>Any OpenAI-compatible server: oMLX, llama-server, vLLM, Ollama, LM Studio, or another device running Het.</span></li>
+            <li><b>sherpa-onnx</b><span>Speech recognition and voices, on the device.</span></li>
+          </ul>
+        </div>
+        <div>
+          <ul class="list">
+            <li><b>Chat</b><span>Starts with Qwen3.5 4B or 9B, sized to the device's memory. Also runs Gemma 4 and 3, Mistral, Phi-3, DeepSeek R1, gpt-oss, Granite 4, LFM2 and more. Anything in MLX or GGUF on Hugging Face can be searched for.</span></li>
+            <li><b>Hearing</b><span>Silero VAD and Smart Turn for turn-taking. Moonshine, NVIDIA Canary and Cohere Transcribe for speech recognition. pyannote and 3D-Speaker to tell speakers apart in meetings.</span></li>
+            <li><b>Speaking</b><span>Kokoro, Supertonic and the system's voices in voice mode. OmniVoice, Qwen3-TTS, Fish Audio S2 Pro and Meta's MMS voices in Make speech.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="table" style="margin-top: 2rem">
+        <table>
+          <thead><tr><th>Image model</th><th>Download</th><th>Steps</th><th>Licence</th></tr></thead>
+          <tbody>
+            <tr><td>FLUX.2 klein 4B</td><td class="n">4.6 GB</td><td>4</td><td>Apache 2.0</td></tr>
+            <tr><td>Z-Image Turbo</td><td class="n">5.9 GB</td><td>9</td><td>Apache 2.0</td></tr>
+            <tr><td>Qwen-Image 2.1 Turbo</td><td class="n">9.7 GB</td><td>8</td><td class="nc">Non-commercial</td></tr>
+            <tr><td>Qwen-Image 2.1</td><td class="n">9.6 GB</td><td>40</td><td class="nc">Non-commercial</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">All four run on MLX at 4-bit. Het suggests FLUX.2 klein on devices with 12 GB of memory or less, and Qwen-Image 2.1 Turbo above that.</p>
+
+      <h3 class="sub">Serving your other devices <small>OpenAI-compatible, port 8123, a key for each paired device</small></h3>
+      <ul class="endpoints">
+        <li><span class="verb">GET</span>/v1/models</li>
+        <li><span class="verb">POST</span>/v1/chat/completions</li>
+        <li><span class="verb">POST</span>/v1/images/generations <span class="c">PNG or JPEG, transparent background</span></li>
+        <li><span class="verb">POST</span>/v1/audio/speech <span class="c">WAV, including cloned voices</span></li>
+        <li><span class="verb">POST</span>/v1/audio/transcriptions</li>
+        <li><span class="verb">POST</span>/v1/web/search, /v1/web/fetch <span class="c">only when web search is on</span></li>
+      </ul>
+      <p class="note">Hosts announce themselves nearby over Bonjour. Pairing takes a six-digit code that lasts five minutes. Other apps can connect with the address and key shown in Settings.</p>
+
+      <div class="leaves">
+        <div>
+          <h3>What leaves the device</h3>
+          <p class="small">Everything else, your chats, files, recordings and voices, stays where it was made.</p>
+        </div>
+        <ul>
+          <li><span>Model downloads, from Hugging Face.</span></li>
+          <li><span>Web search, only when you turn it on: DuckDuckGo, or Ollama's search with your own key, kept in the keychain.</span></li>
+          <li><span>Packages for Svelte apps, fetched once and then kept on the device.</span></li>
+          <li><span>Typeface specimens, from Google Fonts, when you pick a pairing.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Het Voice Studio -->
+  <section class="project" id="voice-studio">
+    <div class="wrap">
+      <div class="project-head">
+        <img src="img/voice-studio.png" alt="Het Voice Studio's app icon" width="88" height="88">
+        <div>
+          <p class="eyebrow">Speech, made on a Mac</p>
+          <h2>Het Voice Studio</h2>
+          <p class="intro">A studio for speech: make it in any of hundreds of languages, clone or design a voice, write whole scripts, transcribe recordings, and record and train voices of your own. It runs the same voice engine as Het.</p>
+          <div class="facts">
+            <span class="on">Mac</span><span>iPad and iPhone, in progress</span><span>Tested on macOS 26</span><span>Not yet released</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sub">What it does</h3>
+      <ul class="features">
+        <li><h4>Studio</h4><p>Type the text, pick an engine, a voice and a language, and press Generate. Steer it with a style such as “whispering”, choose Fast or Best, and fix a seed. Each take shows its waveform and saves as WAV.</p></li>
+        <li><h4>Voices</h4><p>Every voice from every engine in one library: built-in speakers, ready-made voices, designed voices and cloned ones. Try a test line, then use it in the Studio.</p></li>
+        <li><h4>Clone or design a voice</h4><p>Clone from a recording or a file. If a speech recognition model is here, it writes the clip's words down so you only check them. Or describe a voice and keep it with its seed.</p></li>
+        <li><h4>Scripts</h4><p>An ordered list of lines, each with its own voice, language and style. Bring lines in from .txt or .srt, make them all, and export one joined WAV or a WAV for each line.</p></li>
+        <li><h4>Transcribe</h4><p>Record, or pick a recording or video of any length, and it is written down on the device. Save it as text, with or without timestamps, or translate it into English with Whisper.</p></li>
+        <li><h4>The Lab</h4><p>Record a voice line by line, with each take checked for level, clipping and silence, then train an MMS voice on the device and test how ready it is. Easy mode shows one line at a time in large type.</p></li>
+        <li><h4>Find on Hugging Face</h4><p>Search the Hub for speech models. It says what each can do, which are too large for this Mac, and which can't run yet. Any of Meta's MMS voices, about 1,100 languages, runs from here.</p></li>
+        <li><h4>Speech on other machines</h4><p>Add a Mac that hosts Het by its address and key, and its speech models appear as engines in the Studio.</p></li>
+        <li><h4>Three looks</h4><p>Dark, Light and Retro 3.11, with their fonts built in, so it works fully offline once the models are here.</p></li>
+      </ul>
+
+      <h3 class="sub">Speech engines <small>Each engine's licence is shown on its card</small></h3>
+      <div class="table">
+        <table>
+          <thead><tr><th>Engine</th><th>Runs on</th><th>Languages</th><th>Voices</th><th>Size</th><th>Licence</th></tr></thead>
+          <tbody>
+            <tr><td>Supertonic 3</td><td>sherpa-onnx</td><td>31</td><td>10 built in</td><td class="n">145 MB</td><td>OpenRAIL-M</td></tr>
+            <tr><td>Qwen3-TTS 1.7B</td><td>MLX</td><td>10</td><td>9 speakers, with style</td><td class="n">3.1 GB</td><td>Apache 2.0</td></tr>
+            <tr><td>OmniVoice</td><td>MLX</td><td>600+</td><td>Clones and designs</td><td class="n">1.6 GB</td><td class="nc">Non-commercial</td></tr>
+            <tr><td>Fish Audio S2 Pro</td><td>MLX</td><td class="muted">—</td><td>Clones closely, with tags</td><td class="n">6.7 GB</td><td class="nc">Non-commercial</td></tr>
+            <tr><td>Tai Dam (MMS)</td><td>MLX</td><td>Tai Dam, in Latin or Tai Viet script</td><td>1</td><td class="n">145 MB</td><td class="nc">Non-commercial</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Found on Hugging Face, it also runs Qwen3-TTS Base and VoiceDesign, Pocket TTS, Soprano, Breeze TTS, MOSS-TTS, IndexTTS and any MMS or VITS voice. For listening it uses Whisper large-v3 and large-v3-turbo, Parakeet, Cohere Transcribe and Meta's MMS recogniser, each downloaded only when you ask.</p>
+
+      <div class="two" style="margin-top: 1rem">
+        <div>
+          <h3 class="sub">Brings in</h3>
+          <ul class="list">
+            <li><b>Scripts</b><span>.txt and .srt</span></li>
+            <li><b>Lab lines</b><span>.txt, .csv and .tsv, with a translation column shown beside each line</span></li>
+            <li><b>Voices</b><span>.hetvoice, with its licence inside</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="sub">Sends out</h3>
+          <ul class="list">
+            <li><b>Speech</b><span>WAV, one take, one script, or a file for each line</span></li>
+            <li><b>Transcripts</b><span>.txt, with or without timestamps</span></li>
+            <li><b>Recording sets</b><span>.hetrecordings, a folder other trainers can read</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- het_framework -->
+  <section class="project" id="framework">
+    <div class="wrap">
+      <div class="project-head">
+        <div class="glyph" aria-hidden="true">{ }</div>
+        <div>
+          <p class="eyebrow">For building Het's apps</p>
+          <h2>het_framework</h2>
+          <p class="intro">The Flutter packages Het and Het Voice Studio are made from. One way to load every kind of model, downloads that survive the app closing, the voice engine, and Het's look.</p>
+          <div class="facts">
+            <span class="on">v0.21.0</span><span>MIT licence</span><span>Flutter 3.47 · Dart 3.13</span><span>Private for now</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sub">Packages</h3>
+      <div class="table">
+        <table>
+          <thead><tr><th>Package</th><th>What it holds</th><th>Key parts</th></tr></thead>
+          <tbody>
+            <tr><td><code>het_kit</code></td><td>The base layer, no widgets. The Hugging Face hub, background downloads, model shelves, speech as samples and WAV.</td><td class="muted"><code>HuggingFaceHub</code>, <code>BackgroundDownloads</code>, <code>ModelShelf</code></td></tr>
+            <tr><td><code>het_models</code></td><td>One way to load and use every model, and one place that decides what stays loaded.</td><td class="muted"><code>ModelRef</code>, <code>Models</code>, <code>ChatModel</code>, <code>ImageModel</code>, <code>SpeechModel</code>, <code>RecognitionModel</code>, <code>ServerRuntime</code></td></tr>
+            <tr><td><code>het_ui</code></td><td>How Het's apps look: four themes generated from design tokens, icons, list sections, the downloads bar.</td><td class="muted"><code>HetTheme</code>, <code>HetTokens</code>, <code>HetIcons</code>, <code>DownloadsBar</code></td></tr>
+            <tr><td><code>het_voice_audio</code></td><td>The voice engine, no widgets: speech models, voices, clips, transcription, training on MLX, and the models' licences.</td><td class="muted"><code>StudioModels</code>, <code>studioRuntimes()</code>, <code>VoiceTraining</code>, <code>StudioHost</code></td></tr>
+            <tr><td><code>het_voice_ui</code></td><td>The voice pages: make speech, clone a voice, find on Hugging Face, and the clips made.</td><td class="muted"><code>MakeSpeechPage</code>, <code>CloneVoicePage</code>, <code>StudioScope</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="sub">What it gives an app</h3>
+      <ul class="features">
+        <li><h4>Every model, one way</h4><p>A <code>ModelRef</code> says what a model is; a runtime loads it as chat, image, speech or recognition. <code>Models</code> makes room first, so an idle chat model steps aside for an image.</p></li>
+        <li><h4>Other machines, like this one</h4><p><code>ServerRuntime</code> runs chat, images, speech and transcription on any OpenAI-compatible server, so a model on another machine works like a local one.</p></li>
+        <li><h4>Downloads that keep going</h4><p>A native URLSession plugin keeps model downloads running in the background on iOS and macOS, with progress, speed and why one is waiting.</p></li>
+        <li><h4>The Hugging Face hub</h4><p>Search the Hub and tell what a repository holds: MLX, GGUF, or one of the speech families the engine runs.</p></li>
+        <li><h4>One design source</h4><p>One token file, shared with the Penpot design, generates the themes. A test checks every pairing for 4.5:1 contrast.</p></li>
+        <li><h4>Licences built in</h4><p>Each model's licence text ships with its package and goes on the app's licence page in one call, with non-commercial models flagged.</p></li>
+      </ul>
+      <p class="note">Native plugins build for iOS 17 and macOS 14 and up, with Swift Package Manager, and are tested on iOS 26 and macOS 26. Elsewhere, downloads run in the foreground, MLX models report that they can't run here, and Supertonic still speaks.</p>
+    </div>
+  </section>
+
+  <!-- Platforms -->
+  <section class="project" id="platforms">
+    <div class="wrap">
+      <p class="eyebrow">Where they run</p>
+      <h2>Platforms</h2>
+      <div class="table" style="margin-top: 2rem">
+        <table class="matrix">
+          <thead><tr><th></th><th>iPhone</th><th>iPad</th><th>Mac</th><th>Android</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row">Het</th>
+              <td><span class="dot"></span>Everything. Hosts while open.</td>
+              <td><span class="dot"></span>Everything, with the page beside the chat.</td>
+              <td><span class="dot"></span>Everything, plus recording a call.</td>
+              <td><span class="dot part"></span>Chat with GGUF models.</td>
+            </tr>
+            <tr>
+              <th scope="row">Het Voice Studio</th>
+              <td><span class="dot part"></span>Layout built, in testing.</td>
+              <td><span class="dot part"></span>First build, in testing.</td>
+              <td><span class="dot"></span>Its main home.</td>
+              <td><span class="dot none"></span><span class="muted">Not planned</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Tested on iOS 26 and macOS 26. MLX models need Apple silicon, and Apple Intelligence chat needs iOS 26 or macOS 26.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><span class="lao" lang="lo">ເຮັດ</span> is Lao for “make”. Het is made by Michael Thongvanh.</span>
+    <span>© 2026</span>
+  </div>
+</footer>
+
+<script>
+// Het's orb: rings stacked into a sphere, drifting slowly downwards as in the app's launch.
+(function () {
+  var svg = document.getElementById('orb');
+  if (!svg) return;
+  var NS = 'http://www.w3.org/2000/svg', R = 92, N = 13, rings = [];
+  for (var i = 0; i < N; i++) {
+    var e = document.createElementNS(NS, 'ellipse');
+    svg.appendChild(e);
+    rings.push(e);
+  }
+  function draw(t) {
+    for (var i = 0; i < N; i++) {
+      var p = ((i + t) % N) / N;             // 0 at the top, 1 at the bottom
+      var y = (p * 2 - 1) * R;
+      var rx = Math.sqrt(Math.max(0, R * R - y * y));
+      var edge = Math.abs(p * 2 - 1);
+      var e = rings[i];
+      e.setAttribute('cx', 0);
+      e.setAttribute('cy', y.toFixed(2));
+      e.setAttribute('rx', rx.toFixed(2));
+      e.setAttribute('ry', (rx * 0.16).toFixed(2));
+      e.setAttribute('stroke-width', (2.4 - edge * 1.2).toFixed(2));
+      e.setAttribute('stroke-opacity', (0.95 - edge * 0.75).toFixed(3));
+    }
+  }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  draw(0.5);
+  if (still) return;
+  var start = null;
+  function frame(ts) {
+    if (start === null) start = ts;
+    draw(0.5 + (ts - start) / 2400);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
