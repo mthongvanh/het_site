@@ -232,6 +232,11 @@ td .muted, .muted { color: var(--muted); }
 .chart-title + p { color: var(--muted); font-size: 0.9375rem; margin-top: 0.25rem; }
 .table table.wide { min-width: 46rem; }
 
+.download { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
+.download > span { color: var(--muted); font-size: var(--step--1); min-width: 0; flex: 1 1 16rem; }
+.btn { display: inline-block; padding: 0.7rem 1.2rem; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-weight: 600; text-decoration: none; }
+.btn:hover { filter: brightness(1.08); }
+
 /* Platforms */
 .matrix td, .matrix th { padding-right: 1.25rem; }
 .matrix tbody th { font: 500 var(--step-0)/1.4 var(--font-display); text-transform: none; letter-spacing: 0; color: var(--text); white-space: nowrap; }
@@ -308,7 +313,7 @@ footer .wrap { padding-block: 2.5rem 3rem; display: flex; justify-content: space
         <a href="#voice-studio">
           <span class="name">Het Voice Studio</span>
           <span class="what">A Mac app for making, cloning and training voices.</span>
-          <span class="pill">In development</span>
+          <span class="pill">0.1.0 for Mac</span>
         </a>
         <a href="#framework">
           <span class="name">het_framework</span>
@@ -477,8 +482,9 @@ footer .wrap { padding-block: 2.5rem 3rem; display: flex; justify-content: space
           <h2>Het Voice Studio</h2>
           <p class="intro">A studio for speech: make it in any of hundreds of languages, clone or design a voice, write whole scripts, transcribe recordings, and record and train voices of your own. It runs the same voice engine as Het.</p>
           <div class="facts">
-            <span class="on">Mac</span><span>iPad and iPhone, in progress</span><span>Tested on macOS 26</span><span>Not yet released</span>
+            <span class="on">Mac</span><span>iPad and iPhone, in progress</span><span>Tested on macOS 26</span><span class="on">Version 0.1.0</span>
           </div>
+          <p class="download"><a class="btn" href="https://github.com/mthongvanh/het_site/releases/download/voice-studio-v0.1.0/Het-Voice-Studio-0.1.0.dmg">Download for Mac</a><span>Het-Voice-Studio-0.1.0.dmg · 61 MB · Apple silicon, macOS 14 or later · signed and notarised · <a href="https://github.com/mthongvanh/het_site/releases/tag/voice-studio-v0.1.0">release notes and checksum</a></span></p>
         </div>
       </div>
 
